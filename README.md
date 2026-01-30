@@ -67,8 +67,9 @@ Sample CSV Output
 | T5KG3ZG        | 2024-05-30 14:55:33 | 266.60 | Transaction from BranchA branch | Canara       |
 
 
+API Testing
+Postman API Documentation is available here: https://documenter.getpostman.com/view/33935345/2sBXVo9npP
 
-
-Future Enhancement: Statement Analysis
-
-In future releases, the system will support detailed analysis of a single consolidated bank statement to provide meaningful financial insights.
+Future Enhancement
+Statement Analysis:
+In upcoming releases, the system will support detailed analysis of consolidated bank statements, providing meaningful financial insights for better decision-making.
