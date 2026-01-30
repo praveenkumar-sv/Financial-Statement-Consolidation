@@ -20,7 +20,6 @@ Project Highlights
 
 ⚙️ Production-Ready Backend with environment-based configuration
 
-Project Architecture
 src/main/java/com/example/aggregator
 │
 ├── config
@@ -58,11 +57,15 @@ src/main/java/com/example/aggregator
 │
 └── Application.java
 
-Sample Output (CSV)
-transaction_id,date,amount,description,company_name
-2VRUPN7,2024-05-30 14:55:33,577.44,Transaction from BranchA branch,Canara
-7YKNEX2,2024-05-30 14:55:33,711.68,Transaction from BranchA branch,Canara
-T5KG3ZG,2024-05-30 14:55:33,266.60,Transaction from BranchA branch,Canara
+
+Sample CSV Output
+
+| transaction_id | date                | amount | description                     | company_name |
+| -------------- | ------------------- | ------ | ------------------------------- | ------------ |
+| 2VRUPN7        | 2024-05-30 14:55:33 | 577.44 | Transaction from BranchA branch | Canara       |
+| 7YKNEX2        | 2024-05-30 14:55:33 | 711.68 | Transaction from BranchA branch | Canara       |
+| T5KG3ZG        | 2024-05-30 14:55:33 | 266.60 | Transaction from BranchA branch | Canara       |
+
 
 
 
