@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Set;
 
 @Entity
-@Table(name = "companies")
+@Table(name = "company")
 public class Company {
 
     @Id

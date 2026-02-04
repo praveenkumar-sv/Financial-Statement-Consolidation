@@ -27,7 +27,7 @@ public class AWSService {
                       @Value("${aws.s3.bucket}") String bucketName) {
         this.bucketName = bucketName;
         this.s3Client = S3Client.builder()
-                .region(Region.US_EAST_1)
+                .region(Region.AP_SOUTH_1)
                 .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKeyId, secretAccessKey)))
                 .build();
     }

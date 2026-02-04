@@ -2,6 +2,7 @@ package com.example.aggregator.services;
 
 import java.util.List;
 
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -68,4 +69,11 @@ public class UserService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+    public void deleteUser(Long id){
+if (!userRepository.existsByUserId(id)){
+    throw new RuntimeException("user details not found"+id);
 }
+userRepository.deleteById(id);
+
+}
+    }

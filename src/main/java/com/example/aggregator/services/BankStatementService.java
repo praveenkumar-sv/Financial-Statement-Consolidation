@@ -31,7 +31,7 @@ import java.util.List;
 @Service
 public class BankStatementService {
 
-    private static final String STATEMENTS_DIR = "C:/Users/HEMA/OneDrive/Documents/BSAggerator/bank_statements";
+    private static final String STATEMENTS_DIR = "D:/Spring_projects/New folder/Financial-Statement-Consolidation/bank_statements";
 
     @Autowired
     private BankStatementRepository bankStatementRepository;
