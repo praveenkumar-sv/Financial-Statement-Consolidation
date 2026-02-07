@@ -21,7 +21,8 @@ public class AWSService {
 
     private final S3Client s3Client;
     private final String bucketName;
-
+    @Value("${aws.s3.prefix.transactions}")
+    private String transactionsPrefix;
     public AWSService(@Value("${aws.accessKeyId}") String accessKeyId,
                       @Value("${aws.secretAccessKey}") String secretAccessKey,
                       @Value("${aws.s3.bucket}") String bucketName) {
@@ -33,24 +34,25 @@ public class AWSService {
     }
 
     public String uploadFile(String filePath, String fileName) {
-        File file = new File(filePath);
+        String key=transactionsPrefix+fileName;
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
-                .key(fileName)
+                .key(key)
                 .build();
 
         s3Client.putObject(putObjectRequest, Paths.get(filePath));
         return s3Client.utilities().getUrl(b -> b.bucket(bucketName).key(fileName)).toExternalForm();
     }
 
-    public void downloadFileToLocal(String key) throws IOException {
-        String localFilePath = System.getProperty("user.home") + "/Downloads/" + key;
+    public void downloadFileToLocal(String fileName) throws IOException {
+        String key = transactionsPrefix + fileName; // full path in S3
+        String localFilePath = System.getProperty("user.home") + "/Downloads/" + fileName;
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
                 .build();
-
         ResponseInputStream<GetObjectResponse> s3Object = s3Client.getObject(getObjectRequest);
         FileUtils.copyInputStreamToFile(s3Object, new File(localFilePath));
     }
+
 }

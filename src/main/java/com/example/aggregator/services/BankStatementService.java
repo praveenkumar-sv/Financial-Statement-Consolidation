@@ -57,7 +57,7 @@ public class BankStatementService {
         List<Transaction> transactions = DummyDataGenerator.generateDummyTransactions(transactionCount, company.getCompanyName(), branch.getBranchName());
 
         String fileName = "company_" + companyId + "_user_" + userId + "_" + System.currentTimeMillis() + ".csv";
-        Path tempFile= Files.createTempFile("satement_",".csv");
+        Path tempFile= Files.createTempFile("Statement_",".csv");
         String filePath=tempFile.toString();
 
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath))) {

@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface BranchRepository extends JpaRepository<Branch, Long> {
     List<Branch> findByCompanyCompanyId(Long companyId);
+
+    Boolean existsByBranchId(Long branchId);
 }

@@ -32,4 +32,10 @@ public class BranchService {
     public List<Branch> getBranchesByCompanyId(Long companyId) {
         return branchRepository.findByCompanyCompanyId(companyId);
     }
+    public void deleteBranchById(Long id){
+        if (!branchRepository.existsByBranchId(id)){
+            throw new RuntimeException("Branch Details Not Found"+id);
+        }
+        branchRepository.deleteById(id);
+    }
 }
