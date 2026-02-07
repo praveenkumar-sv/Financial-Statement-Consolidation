@@ -10,12 +10,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 @RestController
 @RequestMapping("/statements")
 public class StatementController {
-private static final Logger logger= LoggerFactory.getLogger(StatementController.class);
+    private static final Logger logger = LoggerFactory.getLogger(StatementController.class);
     @Autowired
     private BankStatementService bankStatementService;
 
@@ -24,14 +25,17 @@ private static final Logger logger= LoggerFactory.getLogger(StatementController.
 
     @PostMapping("/generate")
     public ResponseEntity<String> generateStatement(@RequestParam Long userId, @RequestParam Long companyId, @RequestParam Long branchId,
-                                            @RequestParam int transactionCount, @RequestParam boolean deleteAfterUpload) {
+                                                    @RequestParam int transactionCount, @RequestParam boolean deleteAfterUpload) {
         try {
             String generateBankStatement = bankStatementService.generateBankStatement(userId, companyId, branchId, transactionCount, deleteAfterUpload);
-            logger.info("Statement Generated | userID{},companyId{}|branchId{}|transactionCount{}",userId,companyId,branchId,transactionCount);
+            logger.info(
+                    "Statement Generated | userID{} | companyId{} | branchId{} | transactionCount{}",
+                    userId, companyId, branchId, transactionCount
+            );
             return ResponseEntity.status(HttpStatus.CREATED).body(generateBankStatement);
         } catch (IOException e) {
-            logger.error("Statement Generated | userID{},companyId{}|branchId{}|transactionCount{}",userId,companyId,branchId,transactionCount);
-return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to Generate Statement");
+            logger.error("Statement Generated | userID{},companyId{}|branchId{}|transactionCount{}", userId, companyId, branchId, transactionCount);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to Generate Statement");
         }
     }
 
@@ -48,12 +52,21 @@ return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to Generate St
     }
 
     @PostMapping("/parse")
-    public String parseStatement(@RequestParam String filePath) {
+    public ResponseEntity<String> parseStatement(@RequestParam String fileName) {
         try {
-            bankStatementService.parseAndSaveTransactions(filePath);
-            return "Transactions parsed and saved successfully!";
-        } catch (IOException | CsvException e) {
-            return "Error parsing transactions: " + e.getMessage();
+            bankStatementService.parseAndSaveTransactions(fileName);
+            logger.info("Transactions pasrsed and save to data delete .CSV FILE lcoal");
+            return ResponseEntity.ok("Transactions parsed and saved successfully File : "+fileName);
+        } catch (FileNotFoundException e) {
+            logger.warn("there no file in local system please check once");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Error parsing transactions: " + e.getMessage());
+        }catch (SecurityException e){
+            logger.error("internals server error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("internal server error ");
+        }catch (Exception e){
+            logger.error("parsing data to dB getting error ");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to pars the data to DB: "+fileName);
         }
     }
 }

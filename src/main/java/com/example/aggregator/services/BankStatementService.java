@@ -1,6 +1,9 @@
 package com.example.aggregator.services;
 
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.example.aggregator.models.BankStatement;
@@ -15,14 +18,10 @@ import com.example.aggregator.repositories.BranchRepository;
 import com.example.aggregator.repositories.UserRepository;
 import com.example.aggregator.utils.DummyDataGenerator;
 
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvException;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.FileReader;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,9 +29,8 @@ import java.util.List;
 
 @Service
 public class BankStatementService {
-
-    private static final String STATEMENTS_DIR = "D:/Spring_projects/New folder/Financial-Statement-Consolidation/bank_statements";
-
+    @Value("${app.download.dir}")
+    private String downloadDir;
     @Autowired
     private BankStatementRepository bankStatementRepository;
 
@@ -44,10 +42,10 @@ public class BankStatementService {
 
     @Autowired
     private BranchRepository branchRepository;
-    
+
     @Autowired
     private TransactionRepository transactionRepository;
-    
+
     @Autowired
     private AWSService awsService;
 
@@ -59,7 +57,8 @@ public class BankStatementService {
         List<Transaction> transactions = DummyDataGenerator.generateDummyTransactions(transactionCount, company.getCompanyName(), branch.getBranchName());
 
         String fileName = "company_" + companyId + "_user_" + userId + "_" + System.currentTimeMillis() + ".csv";
-        String filePath = STATEMENTS_DIR + "/" + fileName;
+        Path tempFile= Files.createTempFile("satement_",".csv");
+        String filePath=tempFile.toString();
 
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath))) {
             writer.println("transaction_id,date,amount,description,company_name");
@@ -93,7 +92,14 @@ public class BankStatementService {
     }
 
     public void parseAndSaveTransactions(String filePath) throws IOException, CsvException {
-        try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
+        Path pathFile= Paths.get(downloadDir,filePath).normalize();
+        if(!pathFile.startsWith(Paths.get(downloadDir))){
+            throw  new SecurityException("Invalid File Path");
+        }
+        if(!Files.exists(pathFile)){
+            throw  new FileNotFoundException("File not found"+pathFile);
+        }
+        try (CSVReader reader = new CSVReader(new FileReader(pathFile.toFile()))) {
             List<String[]> records = reader.readAll();
             for (String[] record : records.subList(1, records.size())) { // Skipping header
                 Transaction transaction = new Transaction();
@@ -107,5 +113,7 @@ public class BankStatementService {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        Files.deleteIfExists(pathFile);
     }
+
 }
