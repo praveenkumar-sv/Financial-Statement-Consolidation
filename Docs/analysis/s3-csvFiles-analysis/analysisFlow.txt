@@ -1,0 +1,51 @@
++-------------------+
+|  Frontend / API  |
+| (UI / Postman)   |
++---------+---------+
+          |
+          v
++---------------------------+
+|   Spring Boot Application |
+|   (Core Banking System)   |
++-------------+-------------+
+              |
+              | Generate CSV Statements
+              v
++---------------------------+
+|   CSV Export Service      |
+| (Spring Boot Component)   |
++-------------+-------------+
+              |
+              | Upload CSV via AWS SDK
+              v
++---------------------------+
+|   AWS S3 Bucket           |
+| (Raw CSV Storage)        |
+|  /statements/*.csv       |
++-------------+-------------+
+              |
+              | Direct File Access
+              v
++---------------------------+
+|   Amazon QuickSight       |
+| (Direct S3 Data Source)  |
++-------------+-------------+
+              |
+              v
++---------------------------+
+|   Business Users          |
+| (Dashboards & Reports)   |
++---------------------------+
+
+
+In the S3 to QuickSight architecture, AWS S3 acts as the raw data lake and stores immutable CSV files.
+Visualization tools cannot directly perform scalable analytical processing on raw flat files. Therefore,
+Amazon Athena is used as an analytical query engine to logically convert raw CSV data into structured,
+tabular representations using external table definitions. Athena provides a SQL abstraction layer on top of S3,
+enabling data cleansing, transformation, and aggregation. Amazon QuickSight connects to Athena as a semantic and query layer,
+allowing efficient data modeling and visualization without directly operating on raw files.
+This layered approach improves scalability, performance, and maintainability of the analytics solution.
+
+S3 (Raw CSV) → Athena (Tabular SQL Layer) → QuickSight (Visualization & Dashboards)
+
+<!------------IMPORTANT PLANING TO INTEGRATE WITH AI TO IMPROVE THE BUSINESS ANALYSIS IDEA GAPS NEEDS FULFILL---->
